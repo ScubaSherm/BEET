@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.pnpm-store/
+.tmp-starter/
+*.tsbuildinfo
+
+# Local/non-app workspace files
+.agents/
+Home Assistant/
+irrigation_Controller.yaml
+smart_irrigation_dashboard.yaml
+weather_rain_center.yaml
+weather_rain_dashboard.yaml
+
+# Local backup exports should stay private
+emergency-gear-backup-*.json
+emergency-gear-calendar-*.ics
