@@ -127,6 +127,17 @@ https://USER.github.io/REPO/#/items/item-first-aid-bag-001
 
 The app should store data in LocalStorage first and provide JSON export/import through Settings / Backup & Restore. Store real family backups privately and avoid committing sensitive inventory or location details to a public repository.
 
+## Offline Access
+
+The deployed GitHub Pages app registers a browser service worker and includes a web app manifest. After the app has been opened once on a phone, tablet, or laptop, the app shell can load again from that device during an internet outage.
+
+Important operating model:
+
+- GitHub Pages hosts the app files.
+- The browser stores the live family inventory, training, and maintenance data in LocalStorage.
+- JSON export/import is the backup and device-transfer path.
+- Keep recent JSON exports in Google Drive or another private folder so another device can be restored quickly.
+
 ## Monthly Maintenance Routine
 
 1. Open Dashboard.

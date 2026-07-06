@@ -86,6 +86,7 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("All");
   const [notice, setNotice] = useState("");
+  const [isOnline, setIsOnline] = useState(() => (typeof navigator === "undefined" ? true : navigator.onLine));
 
   const items = backup.items;
   const settings = backup.settings;
@@ -97,6 +98,16 @@ export default function App() {
   useEffect(() => {
     saveBackup(backup);
   }, [backup]);
+
+  useEffect(() => {
+    const updateNetworkStatus = () => setIsOnline(navigator.onLine);
+    window.addEventListener("online", updateNetworkStatus);
+    window.addEventListener("offline", updateNetworkStatus);
+    return () => {
+      window.removeEventListener("online", updateNetworkStatus);
+      window.removeEventListener("offline", updateNetworkStatus);
+    };
+  }, []);
 
   useEffect(() => {
     const openHashItem = () => {
@@ -302,9 +313,19 @@ export default function App() {
               <p className="text-sm font-medium text-slate-300">For your family. For anything. Cape Cod.</p>
             </div>
           </div>
-          <button className="rounded-md bg-readiness-signal px-4 py-2 font-semibold text-white shadow-sm ring-1 ring-white/20" onClick={() => setView("storm")}>
-            Storm Mode
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className={`rounded-md px-3 py-2 text-sm font-semibold ring-1 ${
+                isOnline ? "bg-white/10 text-slate-100 ring-white/20" : "bg-readiness-amber text-readiness-ink ring-readiness-amber"
+              }`}
+              title={isOnline ? "Online. Your data is still saved locally in this browser." : "Offline. The app shell and local data are available on this device."}
+            >
+              {isOnline ? "Online" : "Offline Mode"}
+            </span>
+            <button className="rounded-md bg-readiness-signal px-4 py-2 font-semibold text-white shadow-sm ring-1 ring-white/20" onClick={() => setView("storm")}>
+              Storm Mode
+            </button>
+          </div>
         </div>
       </header>
 
@@ -1097,7 +1118,10 @@ function SettingsPage(props: { exportBackup: () => void; importBackup: (file: Fi
     <section className="space-y-5">
       <div>
         <h2 className="text-xl font-bold">Settings / Backup & Restore</h2>
-        <p className="text-sm text-slate-600">{props.kitCount} kits and {props.itemCount} items stored locally in this browser.</p>
+        <p className="text-sm text-slate-600">{props.kitCount} kits and {props.itemCount} items stored locally in this browser. Once opened, this app can keep loading on this device during an internet outage.</p>
+      </div>
+      <div className="rounded-md border border-readiness-pine/20 bg-readiness-pine/5 p-3 text-sm text-slate-700">
+        Export a JSON backup after meaningful changes and keep a copy in Google Drive. GitHub Pages serves the app; this browser stores the live family data.
       </div>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <button className="flex items-center justify-center gap-2 rounded-md bg-readiness-pine px-4 py-3 font-semibold text-white" onClick={props.exportBackup}>

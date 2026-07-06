@@ -1,0 +1,19 @@
+{
+  "name": "Baldwin Family Preparedness Tracker",
+  "short_name": "Baldwin BEET",
+  "description": "Emergency gear inventory, maintenance, QR labels, storm mode, and family preparedness training.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f5ef",
+  "theme_color": "#061522",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./baldwin-emergency-tracker-logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
