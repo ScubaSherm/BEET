@@ -40,6 +40,8 @@ import {
   type TrainingProgram,
 } from "./types/inventory";
 
+const APP_VERSION = (import.meta.env.VITE_BUILD_ID ?? "dev").slice(0, 7);
+
 type View = "dashboard" | "kits" | "inventory" | "detail" | "qr" | "maintenance" | "expirations" | "storm" | "training" | "reports" | "settings";
 type FormState = Omit<InventoryItem, "createdAt" | "updatedAt">;
 type KitFormState = KitAsset;
@@ -420,6 +422,7 @@ export default function App() {
           )}
         </main>
       </div>
+      <footer className="no-print pb-4 text-center text-xs text-slate-400">Version {APP_VERSION}</footer>
     </div>
   );
 }
