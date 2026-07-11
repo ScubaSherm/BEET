@@ -1,7 +1,7 @@
 import { calculateNextDueDate } from "../lib/dates";
 import { starterMaintenancePlans } from "./maintenancePlans";
 import { starterTraining } from "./trainingProgram";
-import type { BackupFile, GearCategory, InventoryItem, KitAsset, PriorityLevel } from "../types/inventory";
+import type { BackupFile, GearCategory, InventoryItem, KitAsset, PackedStatus, PriorityLevel } from "../types/inventory";
 
 const checked = "2026-07-06";
 const now = "2026-07-06T00:00:00.000Z";
@@ -86,6 +86,14 @@ export const starterKits: KitAsset[] = [
     ownerLocation: "Before leaving home",
     deploymentPriority: 4,
     description: "Final household and travel checks before evacuation."
+  },
+  {
+    id: "kit-single-sling",
+    name: "Single Sling Bag",
+    type: "Go-Bag",
+    ownerLocation: "Single Sling Bag",
+    deploymentPriority: 1,
+    description: "RIKOJUXI 262-piece survival kit (ASIN B0D4765KKT) in a MOLLE-compatible crossbody bag."
   }
 ];
 
@@ -97,6 +105,7 @@ type SeedItem = {
   priority?: PriorityLevel;
   notes?: string;
   interval?: number;
+  packedStatus?: PackedStatus;
 };
 
 const seedItems: SeedItem[] = [
@@ -115,7 +124,8 @@ const seedItems: SeedItem[] = [
   ...truckItems(),
   ...trailerItems(),
   ...lastMinuteItems(),
-  ...departureItems()
+  ...departureItems(),
+  ...singleSlingBagItems()
 ];
 
 export const starterBackup: BackupFile = {
@@ -266,6 +276,40 @@ function lastMinuteItems(): SeedItem[] {
   ].map((name) => item("kit-last-minute", name, "1", name.includes("Document") || name.includes("Records") || name.includes("Cash") ? "Document" : "Other", "Medium", "Load only if there is enough warning time"));
 }
 
+function singleSlingBagItems(): SeedItem[] {
+  const kitId = "kit-single-sling";
+  const asin = "RIKOJUXI 262pcs Survival Kit, ASIN B0D4765KKT";
+  const items: SeedItem[] = [
+    item(kitId, "Crossbody Sling Bag", "1", "Backpack", "High", `Main MOLLE-compatible carry bag, detachable strap - ${asin}`),
+    item(kitId, "First Aid Pouch (Red)", "1", "Medical", "Critical", `Zippered pouch holding the first aid items below - ${asin}`),
+    item(kitId, "Tweezers", "1", "Medical", "Medium", asin),
+    item(kitId, "Scissors", "1", "Medical", "Medium", asin),
+    item(kitId, "Safety Pins", "1 set", "Medical", "Low", asin),
+    item(kitId, "Non-Woven Pads", "1 pack", "Medical", "High", asin),
+    item(kitId, "Triangular Bandage", "1", "Medical", "High", asin),
+    item(kitId, "Tourniquet", "1", "Medical", "Critical", asin),
+    item(kitId, "Cotton Swabs", "1 pack", "Medical", "Low", asin),
+    item(kitId, "Cotton Balls", "1 pack", "Medical", "Low", asin),
+    item(kitId, "Assorted Bandages", "1 pack", "Medical", "High", asin),
+    item(kitId, "Emergency Medical Info Card", "1", "Document", "High", asin),
+    item(kitId, "Fishing Kit", "1", "Tool", "Medium", asin),
+    item(kitId, "Multi-Usage Spoon", "1", "Food", "Low", asin),
+    item(kitId, "Collapsible Water Container", "1", "Water", "High", asin),
+    item(kitId, "Fire Starter and Striker", "1", "Tool", "High", asin),
+    item(kitId, "Flashlight", "1", "Power", "High", asin),
+    item(kitId, "Camping Lamp", "1", "Power", "Medium", asin),
+    item(kitId, "Glow Sticks", "1 pack", "Power", "Medium", asin),
+    item(kitId, "Multifunctional Axe with Hammer", "1", "Tool", "High", `17 inch, detachable - ${asin}`),
+    item(kitId, "2-in-1 Shovel with Pick", "1", "Tool", "High", `17 inch - ${asin}`),
+    item(kitId, "Wire Saw", "1", "Tool", "Medium", asin),
+    item(kitId, "Emergency Tent", "1", "Other", "High", asin),
+    item(kitId, "Emergency Blanket", "1", "Other", "High", asin),
+    item(kitId, "Rope", "1", "Tool", "Medium", asin),
+    item(kitId, "Compass", "1", "Tool", "Medium", asin)
+  ];
+  return items.map((seed): SeedItem => ({ ...seed, packedStatus: "Packed" }));
+}
+
 function departureItems(): SeedItem[] {
   return [
     "Everyone Has Backpack",
@@ -300,7 +344,7 @@ function toInventoryItem(seed: SeedItem, index: number): InventoryItem {
     category: seed.category,
     ownerLocation: starterKits.find((kit) => kit.id === seed.kitId)?.ownerLocation ?? "Unassigned",
     quantity,
-    packedStatus: "Unpacked",
+    packedStatus: seed.packedStatus ?? "Unpacked",
     condition: "Good",
     maintenanceIntervalDays: seed.interval,
     lastCheckedDate: checked,
