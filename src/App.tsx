@@ -881,8 +881,14 @@ function StormMode({ items, kits, updatePacked, resetStorm }: { items: Inventory
                         <p className="text-sm text-slate-600">{item.category} - {item.priorityLevel} - {item.packedStatus}</p>
                       </div>
                       <div className="no-print flex flex-wrap gap-2">
-                        {(["Packed", "Deployed", "Missing"] as PackedStatus[]).map((status) => (
-                          <button key={status} className="rounded-md border px-3 py-2 text-sm font-semibold" onClick={() => updatePacked(item, status)}>
+                        {(["Packed", "Unpacked", "Deployed", "Missing"] as PackedStatus[]).map((status) => (
+                          <button
+                            key={status}
+                            className={`rounded-md border px-3 py-2 text-sm font-semibold ${
+                              item.packedStatus === status ? "border-readiness-signal bg-readiness-signal text-white" : ""
+                            }`}
+                            onClick={() => updatePacked(item, status)}
+                          >
                             {status}
                           </button>
                         ))}

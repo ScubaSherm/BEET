@@ -54,14 +54,20 @@ export function validateBackup(value: unknown): BackupFile {
     return migrated;
   }
 
-  backup.items.forEach(validateItem);
+  const validItems = backup.items.filter((item) => {
+    const valid = isValidItem(item);
+    if (!valid) console.warn("Dropping invalid inventory item from backup:", item);
+    return valid;
+  });
+  if (validItems.length === 0 && backup.items.length > 0) {
+    throw new Error("Invalid backup file.");
+  }
+  backup.items = validItems;
   return backup;
 }
 
-function validateItem(item: InventoryItem) {
-  if (!item.id || !item.kitId || !item.itemName || !item.category || !item.ownerLocation || !item.qrCodeId) {
-    throw new Error("Invalid inventory item.");
-  }
+function isValidItem(item: InventoryItem) {
+  return Boolean(item.id && item.kitId && item.itemName && item.category && item.ownerLocation && item.qrCodeId);
 }
 
 export function makeBackup(
